@@ -1,0 +1,4 @@
+@EndUserText.label: 'Expose entities of DEVTeam'
+define service Zsd_expose_devteam {
+  expose zc_devteam_01 as DEVTeam;
+}

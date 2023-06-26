@@ -1,0 +1,40 @@
+managed; // you use the rap framework to build the cud ops
+
+define behavior for zcds_devteam_01 alias DEVTeam
+implementation in class zbp_cds_devteam_01 unique
+persistent table zrap_devteam0_01
+lock master
+etag master LocalLastChangedAt
+{
+
+  create;
+  update;
+  delete;
+
+  field ( numbering : managed, readonly ) id; // user not enter this Id so it is managed & is not modifiable
+  field ( readonly ) Active, Salary;
+  field ( readonly ) LastChangedAt, LocalLastChangedAt;
+
+// once the checks in setActive method is passed the Active flag will set to true
+  action ( features : instance ) setActive result [1] $self; //Action & feature control
+  // if role checnged then change the salary
+  //on save triggered after the role is changed
+  //on modify // before the role is changed
+  determination changeSalary on save { field Role; }
+  validation validateAge on save { field Age; create; }
+
+  // map the table cols to the view fields
+  //we did this mapping to make the system knows the table used and the fields need in the cud operations
+  mapping for zrap_devteam0_01
+    {
+      Id                 = id;
+      FirstName          = firstName;
+      LastName           = lastName;
+      Age                = age;
+      Role               = role;
+      Salary             = salary;
+      Active             = active;
+      LastChangedAt      = last_changed_at;
+      LocalLastChangedAt = local_last_changed_at;
+    }
+}
